@@ -1,0 +1,6 @@
+{
+    "url": "servidornginx.com",
+    "noThreads":5,
+    "noRequests":1000,
+    "path": "./entrada.json"
+}
