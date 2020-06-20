@@ -18,19 +18,17 @@ type Spec struct {
 	Path       string `json:"path"`
 }
 
-func getRandomValues() string {
-	var s string
-	return s
-}
-
 func main() {
 	var s Spec
 	var casos Casos
 
+	//escribir el archivo de casos
+	//writeData(20000)
 	readSpecifications(&s)
-	reaData(&casos, s.Path)
 
-	makePostRequest(&s, s.Url)
+	casosRetorno := reaData(&casos, s.Path, s.NoRequests)
+
+	makePostRequest(casosRetorno, s.Url)
 	//makeGetRequest(&s, s.Url)
 	return
 }
@@ -53,14 +51,14 @@ func makeGetRequest(s *Spec, url string) {
 	log.Println(string(body))
 }
 
-func makePostRequest(s *Spec, url string) {
+func makePostRequest(s *Casos, url string) {
 	//realizar conexion con servidor nginx
-	j_data, err := json.Marshal(s)
+	jData, err := json.Marshal(s)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	resp, err := http.Post(url+"api/", "application/json", bytes.NewBuffer(j_data))
+	resp, err := http.Post(url, "application/json", bytes.NewBuffer(jData))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -74,12 +72,13 @@ func makePostRequest(s *Spec, url string) {
 	}
 
 	log.Println(string(body))
+
 }
 
 func readSpecifications(s *Spec) {
 
 	//Read de file of specifications
-	configFile, err := ioutil.ReadFile("./specs.json")
+	configFile, err := ioutil.ReadFile("./Files/specs.json")
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)

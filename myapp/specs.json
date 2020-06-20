@@ -1,6 +1,0 @@
-{
-    "url": "http://localhost:3001/",
-    "noThreads":5,
-    "noRequests":1000,
-    "path": "./casos.json"
-}
