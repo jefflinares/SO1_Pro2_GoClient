@@ -1,6 +1,6 @@
 {
-    "url": "servidornginx.com",
+    "url": "http://localhost:3001/",
     "noThreads":5,
     "noRequests":1000,
-    "path": "./entrada.json"
+    "path": "./casos.json"
 }

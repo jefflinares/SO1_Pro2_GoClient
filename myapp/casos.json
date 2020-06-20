@@ -1,0 +1,23 @@
+[
+        {
+            "Nombre":"Juan Perez",
+            "Departamento":"Escuintla",
+            "Edad":25,
+            "forma de CONTAgio":"Comunitario",
+            "Estado":"Activo"
+        },
+        {
+            "Nombre":"Vanessa Lopez",
+            "Departamento":"Quetzaltenango",
+            "Edad":30,
+            "Forma de Contagio":"Viral",
+            "Estado":"Recuperado"
+        },
+        {
+            "Nombre":"Juan Reyes",
+            "Departamento":"Guatemala",
+            "Edad":45,
+            "Forma de Contagio":"Viral",
+            "Estado":"Activo"
+        }
+    ]
