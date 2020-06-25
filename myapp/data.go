@@ -69,6 +69,18 @@ func reaData(casos *Casos, path string, n int) *Casos {
 
 	} else {
 
+		if len(casos.Casos) < n {
+
+			for i := 0; i < len(casos.Casos); i++ {
+				casosRetorno.Casos = append(casosRetorno.Casos, casos.Casos[i])
+			}
+
+			for i := len(casos.Casos); i < n; i++ {
+				casosRetorno.Casos = append(casosRetorno.Casos, getNewRandomValue())
+			}
+			return &casosRetorno
+		}
+
 		for i := 0; i < n && i < len(casos.Casos); i++ {
 
 			casosRetorno.Casos = append(casosRetorno.Casos, casos.Casos[i])
@@ -107,6 +119,20 @@ func getRandomValues(n int) string {
 
 	s += "\t]"
 	return s
+}
+
+func getNewRandomValue() *Caso {
+	nombre := []string{"Luis", "Dulce", "Antonia", "Pedro", "Pilar", "Fernando", "Jose", "Pablo", "Anna", "Camila", "Susana", "Erick", "Ronald", "Jeff"}
+	apellido := []string{" Caceres", " Perez", " Juarez", " Setino", " Ortega", " Girón", " Hernández", " Gomez", " Flores", " Polanco", " López", " González"}
+	departamento := []string{"Guatemala", "Escuintla", "Sacatepequez", "Chiquimula", "Huehuetenango", "Quetzaltenango", "Peten", "Zacapa", "Santa Rosa"}
+	formasContagio := []string{"Comunitario", "viral"}
+	estado := []string{"Activo", "Recuperado", "Fallecido"}
+
+	return &Caso{Nombre: nombre[rand.Intn(len(nombre))] + apellido[rand.Intn(len(apellido))],
+		Departamento:   departamento[rand.Intn(len(departamento))],
+		Forma_Contagio: formasContagio[rand.Intn(len(formasContagio))],
+		Edad:           (rand.Intn(80 - 15 + 1)), Estado: estado[rand.Intn(len(estado))]}
+
 }
 
 func writeData(n int) {

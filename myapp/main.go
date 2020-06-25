@@ -28,7 +28,26 @@ func main() {
 
 	casosRetorno := reaData(&casos, s.Path, s.NoRequests)
 
-	makePostRequest(casosRetorno, s.Url)
+	fmt.Println("Casos totales leídos del archivo :")
+	fmt.Println(len(casosRetorno.Casos))
+	var NRequestPerThread int = s.NoRequests / s.NoThreads
+	indexInicial := 0
+
+	//ENVIAR POR HILO LA PORCIO DE REQUEST EN CADA UNO
+	for i := 0; i < s.NoThreads; i++ {
+		var casosAux Casos
+		if (i + 1) == s.NoThreads {
+			//El ultimo hilo
+			casosAux.Casos = casosRetorno.Casos[indexInicial:len(casosRetorno.Casos)]
+			makePostRequest(&casosAux, s.Url)
+		} else {
+			casosAux.Casos = casosRetorno.Casos[indexInicial : NRequestPerThread+indexInicial]
+			makePostRequest(&casosAux, s.Url)
+		}
+		indexInicial += NRequestPerThread
+	}
+
+	//makePostRequest(casosRetorno, s.Url)
 	//makeGetRequest(&s, s.Url)
 	return
 }
