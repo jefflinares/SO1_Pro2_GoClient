@@ -59,7 +59,7 @@ func reaData(casos *Casos, path string, n int) *Casos {
 
 	json.Unmarshal([]byte(ap), &casos)
 
-	fmt.Println("Imprimir casos")
+	// fmt.Println("Imprimir casos")
 	//Print all the information
 
 	var casosRetorno Casos

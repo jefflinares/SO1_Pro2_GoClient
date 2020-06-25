@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"time"
+	"math/rand"
 )
 
 type Spec struct {
@@ -28,23 +30,33 @@ func main() {
 
 	casosRetorno := reaData(&casos, s.Path, s.NoRequests)
 
-	fmt.Println("Casos totales leídos del archivo :")
+	fmt.Print("\nCasos totales leídos del archivo: ")
 	fmt.Println(len(casosRetorno.Casos))
 	var NRequestPerThread int = s.NoRequests / s.NoThreads
 	indexInicial := 0
 
 	//ENVIAR POR HILO LA PORCIO DE REQUEST EN CADA UNO
+	channels := make(chan string, s.NoThreads)
 	for i := 0; i < s.NoThreads; i++ {
 		var casosAux Casos
 		if (i + 1) == s.NoThreads {
 			//El ultimo hilo
 			casosAux.Casos = casosRetorno.Casos[indexInicial:len(casosRetorno.Casos)]
-			makePostRequest(&casosAux, s.Url)
+			go makePostRequest(i, &casosAux, s.Url, channels)
 		} else {
 			casosAux.Casos = casosRetorno.Casos[indexInicial : NRequestPerThread+indexInicial]
-			makePostRequest(&casosAux, s.Url)
+			go makePostRequest(i, &casosAux, s.Url, channels)
 		}
 		indexInicial += NRequestPerThread
+	}
+
+	count := 0
+	for elem := range channels {
+		if count == s.NoThreads - 1 {
+			close(channels)
+		}
+		count++
+		fmt.Println(elem)
 	}
 
 	//makePostRequest(casosRetorno, s.Url)
@@ -70,8 +82,15 @@ func makeGetRequest(s *Spec, url string) {
 	log.Println(string(body))
 }
 
-func makePostRequest(s *Casos, url string) {
-	//realizar conexion con servidor nginx
+func makePostRequest(index int, s *Casos, url string, channels chan string) {
+	// Para simular una carga de trabajo
+    // dormimos el programa x cantidad de segundo
+    // donde x puede ir de x a 15
+	var seconds int
+    seconds = rand.Intn(15)
+	time.Sleep(time.Duration(seconds) * time.Second)
+
+	// realizar conexion con servidor
 	jData, err := json.Marshal(s)
 	if err != nil {
 		log.Fatal(err)
@@ -81,17 +100,16 @@ func makePostRequest(s *Casos, url string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
-
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	log.Println(string(body))
-
+	log.Println(string(body))	
+	cadena := fmt.Sprintf("Hilo No. %d", index + 1)
+	channels <- cadena
 }
 
 func readSpecifications(s *Spec) {
@@ -108,9 +126,9 @@ func readSpecifications(s *Spec) {
 	json.Unmarshal(configFile, &s)
 
 	//Print all the information
-	fmt.Println(s.Url)
-	fmt.Println(strconv.Itoa(s.NoThreads))
-	fmt.Println(strconv.Itoa(s.NoRequests))
-	fmt.Println(s.Path)
+	fmt.Println("Url:        ", s.Url)
+	fmt.Println("NoThreads:  ", strconv.Itoa(s.NoThreads))
+	fmt.Println("NoRequests: ", strconv.Itoa(s.NoRequests))
+	fmt.Println("Path:       ", s.Path)
 
 }
